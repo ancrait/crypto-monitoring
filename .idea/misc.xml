@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/price-fetcher/pom.xml" />
+        <option value="$PROJECT_DIR$/price-alert/pom.xml" />
       </list>
     </option>
   </component>
