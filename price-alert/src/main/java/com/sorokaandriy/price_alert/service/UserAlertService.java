@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +27,8 @@ public class UserAlertService {
 
     }
 
-    public UserAlertResponse updateUserAlert(@Valid UserAlertRequest request, Long chatId) {
-        UserAlert userAlert = repository.findByChatIdAndSymbol(chatId, request.getSymbol())
+    public UserAlertResponse updateUserAlert(@Valid UserAlertRequest request, Long chatId, String symbol) {
+        UserAlert userAlert = repository.findByChatIdAndSymbol(chatId, symbol)
                 .orElseThrow(() -> new UserAlertNotFoundException("UserAlert with chatId " + chatId + " not found"));
 
         userAlert.setTargetPrice(request.getTargetPrice());
@@ -35,5 +36,35 @@ public class UserAlertService {
 
         repository.save(userAlert);
         return mapper.fromUserAlertToUserAlertResponse(userAlert);
+    }
+
+    public void deleteUserAlert(Long chatId, String symbol) {
+        UserAlert userAlert = repository.findByChatIdAndSymbol(chatId, symbol)
+                .orElseThrow(() -> new UserAlertNotFoundException("UserAlert with chatId " + chatId + " not found"));
+
+        repository.delete(userAlert);
+    }
+
+    public UserAlertResponse getUserAlert(Long chatId, String symbol) {
+        UserAlert userAlert = repository.findByChatIdAndSymbol(chatId, symbol)
+                .orElseThrow(() -> new UserAlertNotFoundException("UserAlert with chatId " + chatId + " not found"));
+        return mapper.fromUserAlertToUserAlertResponse(userAlert);
+    }
+
+    public List<UserAlertResponse> getUserAlerts(Long chatId) {
+        List<UserAlert> userAlertList = repository.findByChatId(chatId);
+
+        return userAlertList.stream().map(userAlert ->
+                mapper.fromUserAlertToUserAlertResponse(userAlert)).toList();
+
+    }
+
+    public void changeEnabled(Long chatId, String symbol) {
+        UserAlert userAlert = repository.findByChatIdAndSymbol(chatId,symbol)
+                .orElseThrow(() -> new UserAlertNotFoundException("UserAlert with chatId " + chatId + " and symbol " +
+                        symbol + " not found"));
+
+        userAlert.setEnabled(!userAlert.getEnabled());
+
     }
 }
