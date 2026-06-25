@@ -5,11 +5,11 @@ services:
     image: postgres:16-alpine
     container_name: crypto-postgres
     environment:
-      POSTGRES_DB: crypto_monitoring
-      POSTGRES_USER: crypto
-      POSTGRES_PASSWORD: crypto123
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5433:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +22,7 @@ services:
     image: redis:7-alpine
     container_name: crypto-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
