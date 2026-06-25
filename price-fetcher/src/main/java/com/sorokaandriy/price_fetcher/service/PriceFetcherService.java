@@ -34,12 +34,12 @@ public class PriceFetcherService {
     public void fetchPrices() {
         List<String> symbolList = Arrays.asList(symbols.split(","));
 
-        for (String symbol : symbolList) {
+        symbolList.forEach(s ->{
             try {
-                BinancePriceResponse response = binanceClient.fetchPrice(symbol);
+                BinancePriceResponse response = binanceClient.fetchPrice(s);
 
                 Coin coin = Coin.builder()
-                        .symbol(symbol.replace("USDT", ""))
+                        .symbol(s.replace("USDT",""))
                         .priceUsd(new BigDecimal(response.getPrice()))
                         .source("BINANCE")
                         .timestamp(Instant.now())
@@ -52,8 +52,8 @@ public class PriceFetcherService {
                 log.info("Fetched {}: ${}", coin.getSymbol(), coin.getPriceUsd());
 
             } catch (Exception e) {
-                log.error("Failed to fetch price for {}: {}", symbol, e.getMessage());
+                log.error("Failed to fetch price for {}: {}", s, e.getMessage());
             }
-        }
+        });
     }
 }
