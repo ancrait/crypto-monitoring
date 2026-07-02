@@ -28,26 +28,19 @@ public class PriceUpdateListener {
             boolean shouldNotify = false;
 
             if (alert.getDirection() == Direction.ABOVE) {
-                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) >= 0 && !alert.getTriggered()) {
+                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) >= 0) {
                     shouldNotify = true;
-                    alert.setTriggered(true);
-                } else if (update.getPriceUsd().compareTo(alert.getTargetPrice()) < 0 && alert.getTriggered()) {
-                    alert.setTriggered(false);
                 }
             }
             else if (alert.getDirection() == Direction.BELOW){
-                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) <= 0 && !alert.getTriggered()){
+                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) <= 0){
                     shouldNotify = true;
-                    alert.setTriggered(true);
-                }
-                else if (update.getPriceUsd().compareTo(alert.getTargetPrice()) > 0 && alert.getTriggered()){
-                    alert.setTriggered(false);
                 }
             }
 
-            alertRepository.save(alert);
-
             if (shouldNotify) {
+                alertRepository.delete(alert);
+
                 redisTemplate.convertAndSend("alerts:notification",
                         UserAlertNotification
                                 .builder()
@@ -56,11 +49,10 @@ public class PriceUpdateListener {
                                 .updatedPrice(update.getPriceUsd())
                                 .targetPrice(alert.getTargetPrice())
                                 .direction(alert.getDirection())
-                                .triggered(alert.getTriggered())
                                 .updatedAt(Instant.now())
                                 .build());
 
-                log.info("ALERT TRIGGERED: chatId={} symbol={} price={} target={} direction={}",
+                log.info("ALERT TRIGGERED AND DELETED: chatId={} symbol={} price={} target={} direction={}",
                         alert.getChatId(), alert.getSymbol(),
                         update.getPriceUsd(), alert.getTargetPrice(),
                         alert.getDirection());

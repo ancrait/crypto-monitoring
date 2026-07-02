@@ -1,7 +1,5 @@
-package com.sorokaandriy.price_alert.dto;
+package com.sorokaandriy.telegram_bot.dto;
 
-
-import com.sorokaandriy.price_alert.entity.enumeration.Direction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +12,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserAlertResponse {
-    private Long id;
+public class AlertNotification {
+    private Long chatId;
     private String symbol;
+    private BigDecimal updatedPrice;
     private BigDecimal targetPrice;
-    private Direction direction;
-    private Boolean enabled;
-    private Instant createdAt;
+    private String direction;
+    private Instant updatedAt;
 }

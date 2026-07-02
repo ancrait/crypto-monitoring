@@ -33,8 +33,6 @@ public class UserAlert {
     @Column(nullable = false)
     private Boolean enabled = true;
     @Column(nullable = false)
-    private Boolean triggered = false;
-    @Column(nullable = false)
     @Builder.Default
     private Instant createdAt = Instant.now();
 

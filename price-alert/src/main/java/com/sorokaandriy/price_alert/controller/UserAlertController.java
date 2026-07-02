@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -17,12 +18,13 @@ public class UserAlertController {
 
     private final UserAlertService service;
 
-    @GetMapping("/{chatId}/{symbol}")
+    @GetMapping("/{chatId}/{symbol}/{targetPrice}")
     public ResponseEntity<UserAlertResponse> getUserAlert(
             @PathVariable Long chatId,
-            @PathVariable String symbol
+            @PathVariable String symbol,
+            @PathVariable BigDecimal targetPrice
     ){
-        return ResponseEntity.ok(service.getUserAlert(chatId,symbol));
+        return ResponseEntity.ok(service.getUserAlert(chatId,symbol,targetPrice));
     }
 
     @GetMapping("/{chatId}")
@@ -32,13 +34,13 @@ public class UserAlertController {
         return ResponseEntity.ok(service.getUserAlerts(chatId));
     }
 
-    @PutMapping("/{chatId}/{symbol}")
-    public ResponseEntity<Void> changeEnabled(
+    @PatchMapping("/{chatId}/{symbol}/{targetPrice}/toggle")
+    public ResponseEntity<Boolean> changeEnabled(
             @PathVariable Long chatId,
-            @PathVariable String symbol
+            @PathVariable String symbol,
+            @PathVariable BigDecimal targetPrice
     ){
-        service.changeEnabled(chatId,symbol);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(service.changeEnabled(chatId, symbol, targetPrice));
     }
 
     @PostMapping
@@ -47,24 +49,25 @@ public class UserAlertController {
         return ResponseEntity.ok(service.createUserAlert(request));
     }
 
-    @PutMapping("/{chatId}/{symbol}")
+    @PutMapping("/{chatId}/{symbol}/{targetPrice}")
     public ResponseEntity<UserAlertResponse> updateUserAlert(
             @Valid @RequestBody UserAlertRequest request,
             @PathVariable Long chatId,
-            @PathVariable String symbol) {
-        return ResponseEntity.ok(service.updateUserAlert(request, chatId, symbol));
+            @PathVariable String symbol,
+            @PathVariable BigDecimal targetPrice)
+    {
+        return ResponseEntity.ok(service.updateUserAlert(request, chatId, symbol,targetPrice));
     }
 
-    @DeleteMapping("/{chatId}/{symbol}")
+    @DeleteMapping("/{chatId}/{symbol}/{targetPrice}")
     public ResponseEntity<Void> deleteUserAlert(
             @PathVariable Long chatId,
-            @PathVariable String symbol
+            @PathVariable String symbol,
+            @PathVariable BigDecimal targetPrice
     ){
-        service.deleteUserAlert(chatId,symbol);
+        service.deleteUserAlert(chatId,symbol,targetPrice);
         return ResponseEntity.noContent().build();
     }
-
-
 
 
 }

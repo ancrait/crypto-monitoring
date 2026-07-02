@@ -1,9 +1,9 @@
-package com.sorokaandriy.price_alert.config;
+package com.sorokaandriy.telegram_bot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sorokaandriy.price_alert.dto.PriceUpdate;
-import com.sorokaandriy.price_alert.listener.PriceUpdateListener;
+import com.sorokaandriy.telegram_bot.dto.AlertNotification;
+import com.sorokaandriy.telegram_bot.listener.AlertNotificationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,29 +17,26 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    // for handle data from topic
     @Bean
-    public MessageListenerAdapter listenerAdapter(PriceUpdateListener listener) {
+    public MessageListenerAdapter listenerAdapter(AlertNotificationListener listener) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        MessageListenerAdapter adapter = new MessageListenerAdapter(listener, "handlePriceUpdate");
-        adapter.setSerializer(new Jackson2JsonRedisSerializer<>(mapper, PriceUpdate.class));
+        MessageListenerAdapter adapter = new MessageListenerAdapter(listener, "handlePriceNotification");
+        adapter.setSerializer(new Jackson2JsonRedisSerializer<>(mapper, AlertNotification.class));
         return adapter;
     }
 
-    // read from coin service
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory,
             MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, new ChannelTopic("prices:updates")); // listen chanel prices:updates
+        container.addMessageListener(listenerAdapter, new ChannelTopic("alerts:notification"));
         return container;
     }
 
-    // for parse into json
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -57,6 +54,4 @@ public class RedisConfig {
 
         return template;
     }
-
-
 }

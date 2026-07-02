@@ -1,7 +1,5 @@
-package com.sorokaandriy.price_alert.dto;
+package com.sorokaandriy.telegram_bot.dto;
 
-
-import com.sorokaandriy.price_alert.entity.enumeration.Direction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +16,7 @@ public class UserAlertResponse {
     private Long id;
     private String symbol;
     private BigDecimal targetPrice;
-    private Direction direction;
+    private String direction;
     private Boolean enabled;
     private Instant createdAt;
 }
