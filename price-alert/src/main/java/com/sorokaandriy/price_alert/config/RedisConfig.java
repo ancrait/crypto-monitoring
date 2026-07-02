@@ -1,5 +1,7 @@
 package com.sorokaandriy.price_alert.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sorokaandriy.price_alert.dto.PriceUpdate;
 import com.sorokaandriy.price_alert.listener.PriceUpdateListener;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +20,11 @@ public class RedisConfig {
     // for handle data from topic
     @Bean
     public MessageListenerAdapter listenerAdapter(PriceUpdateListener listener) {
-        MessageListenerAdapter adapter = new MessageListenerAdapter(listener, "handlePriceUpdate"); // call listiners method
-        adapter.setSerializer(new Jackson2JsonRedisSerializer<>(PriceUpdate.class));
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        MessageListenerAdapter adapter = new MessageListenerAdapter(listener, "handlePriceUpdate");
+        adapter.setSerializer(new Jackson2JsonRedisSerializer<>(mapper, PriceUpdate.class));
         return adapter;
     }
 
@@ -42,8 +47,11 @@ public class RedisConfig {
 
         template.setKeySerializer(new StringRedisSerializer());
 
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
         Jackson2JsonRedisSerializer<Object> jsonSerializer =
-                new Jackson2JsonRedisSerializer<>(Object.class);
+                new Jackson2JsonRedisSerializer<>(mapper, Object.class);
         template.setValueSerializer(jsonSerializer);
         template.setHashValueSerializer(jsonSerializer);
 
