@@ -19,5 +19,6 @@ public class UserAlertResponse {
     private String symbol;
     private BigDecimal targetPrice;
     private Direction direction;
+    private Boolean enabled;
     private Instant createdAt;
 }
