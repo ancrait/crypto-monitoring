@@ -27,5 +27,72 @@ services:
       timeout: 3s
       retries: 5
 
+  price-fetcher:
+    build:
+      context: ../price-fetcher
+      dockerfile: ../docker/Dockerfile.price-fetcher
+    container_name: crypto-price-fetcher
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  price-alert:
+    build:
+      context: ../price-alert
+      dockerfile: ../docker/Dockerfile.price-alert
+    container_name: crypto-price-alert
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  telegram-bot:
+    build:
+      context: ../telegram-bot
+      dockerfile: ../docker/Dockerfile.telegram-bot
+    container_name: crypto-telegram-bot
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      BOT_TOKEN: ${BOT_TOKEN}
+      ALERT_SERVICE_HOST: price-alert
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      price-alert:
+        condition: service_started
+
 volumes:
   pgdata:
