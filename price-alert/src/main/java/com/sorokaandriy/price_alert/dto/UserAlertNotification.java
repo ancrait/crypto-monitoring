@@ -20,7 +20,6 @@ public class UserAlertNotification {
     private BigDecimal updatedPrice;
     private BigDecimal targetPrice;
     private Direction direction;
-    private Boolean triggered;
     private Instant updatedAt;
 
 }

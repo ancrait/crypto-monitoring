@@ -17,7 +17,6 @@ public class UserAlertMapper {
                 .targetPrice(request.getTargetPrice())
                 .direction(request.getDirection())
                 .enabled(true)
-                .triggered(false)
                 .createdAt(Instant.now())
                 .build();
     }
@@ -28,6 +27,7 @@ public class UserAlertMapper {
                 .symbol(userAlert.getSymbol())
                 .targetPrice(userAlert.getTargetPrice())
                 .direction(userAlert.getDirection())
+                .enabled(userAlert.getEnabled())
                 .createdAt(userAlert.getCreatedAt())
                 .build();
     }

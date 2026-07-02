@@ -26,11 +26,5 @@ public class BinanceClient {
                 .body(BinancePriceResponse.class);
     }
 
-    public List<BinancePriceResponse> fetchPrices(List<String> symbols) {
-        List<BinancePriceResponse> results = new ArrayList<>();
-        for (String symbol : symbols) {
-            results.add(fetchPrice(symbol));
-        }
-        return results;
-    }
+
 }
