@@ -28,12 +28,12 @@ public class PriceUpdateListener {
             boolean shouldNotify = false;
 
             if (alert.getDirection() == Direction.ABOVE) {
-                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) >= 0) {
+                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) > 0) {
                     shouldNotify = true;
                 }
             }
             else if (alert.getDirection() == Direction.BELOW){
-                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) <= 0){
+                if (update.getPriceUsd().compareTo(alert.getTargetPrice()) < 0){
                     shouldNotify = true;
                 }
             }
